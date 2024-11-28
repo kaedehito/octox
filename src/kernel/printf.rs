@@ -70,6 +70,35 @@ macro_rules! println {
     };
 }
 
+#[macro_export]
+macro_rules! msg {
+    ($fmt:literal$(, $($arg: tt)+)?) => {
+        $crate::printf::_print(format_args!(concat!("[\x1b[35m  MG  \x1b[0m] ", $fmt, "\n") $(,$($arg)+)?))
+    };
+}
+
+#[macro_export]
+macro_rules! end {
+    ($fmt:literal$(, $($arg: tt)+)?) => {
+        $crate::printf::_print(format_args!(concat!("[\x1b[32m  OK  \x1b[0m] ", $fmt, "\n") $(,$($arg)+)?))
+    };
+}
+
+
+#[macro_export]
+macro_rules! err {
+    ($fmt:literal$(, $($arg: tt)+)?) => {
+        $crate::printf::_print(format_args!(concat!("[\x1b[31m  ER  \x1b[0m] ", $fmt, "\n") $(,$($arg)+)?))
+    };
+}
+
+#[macro_export]
+macro_rules! hart {
+    ($fmt:literal$(, $($arg: tt)+)?) => {
+        $crate::printf::_print(format_args!(concat!("[\x1b[34m  HT  \x1b[0m] ", $fmt, "\n") $(,$($arg)+)?))
+    };
+}
+
 pub static mut EWRITER: Writer = Writer;
 
 pub fn _eprint(args: fmt::Arguments<'_>) {
@@ -83,6 +112,13 @@ pub fn _eprint(args: fmt::Arguments<'_>) {
 macro_rules! eprint {
     ($($arg:tt)*) => {
         $crate::printf::_eprint(format_args!($($arg)*))
+    };
+}
+
+#[macro_export]
+macro_rules! eprintln {
+    ($($arg:tt)*) => {
+        $crate::printf::_eprint(format_args!(concat!("\x1b[32;1m[HART]\x1b[0m ", $fmt, "\n") $(,$($arg)+)?))
     };
 }
 

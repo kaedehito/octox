@@ -13,6 +13,8 @@ use crate::{
     uart::UART,
     virtio_disk::DISK,
     vm::Addr,
+    err,
+    trap::scause::Exception::{self, StorePageFault}
 };
 
 extern "C" {
@@ -81,11 +83,16 @@ pub extern "C" fn usertrap() -> ! {
             syscall();
         }
         Trap::Interrupt(intr)
+
             if {
                 which_dev = devintr(intr);
                 which_dev.is_some()
             } => {}
         _ => {
+
+            if scause::read().is_exception(){
+                err!("Expection");
+            }
             let mut inner = p.inner.lock();
             println!(
                 "usertrap(): unexcepted scause {:?}, pid={:?}",

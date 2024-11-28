@@ -9,7 +9,7 @@
 // page boundary.
 
 use crate::memlayout::TRAPFRAME;
-use core::arch::asm;
+use core::arch::naked_asm;
 
 #[link_section = "trampsec"]
 #[no_mangle]
@@ -26,7 +26,7 @@ pub unsafe extern "C" fn trampoline() -> ! {
         // in supervisor mode, but with a
         // user page table.
 
-        asm!(
+        naked_asm!(
             // save user a0 in sscratch so
             // a0 can be used to get at TRAPFRAME
             "csrw sscratch, a0",
@@ -86,7 +86,6 @@ pub unsafe extern "C" fn trampoline() -> ! {
             // jump to usertrap(), which does not return
             "jr t0",
             tf = const TRAPFRAME,
-            options(noreturn)
         );
     }
 
@@ -101,7 +100,7 @@ pub unsafe extern "C" fn trampoline() -> ! {
         // a0: TRAPFRAME, in user page table.
         // a1: user page table, for satp.
 
-        asm!(
+        naked_asm!(
             // switch to the user page table.
             "sfence.vma zero, zero",
             "csrw satp, a0",
@@ -147,7 +146,6 @@ pub unsafe extern "C" fn trampoline() -> ! {
             // usertrap_ret() set up sstatus and sepc.
             "sret",
             tf = const TRAPFRAME,
-            options(noreturn),
         );
     }
 }

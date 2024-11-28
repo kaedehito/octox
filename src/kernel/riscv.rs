@@ -1,3 +1,7 @@
+use crate::{
+    msg
+};
+
 // RISC-V registers
 pub mod registers {
     // hart (core) id registers
@@ -543,6 +547,7 @@ pub mod registers {
             unsafe {
                 asm!("csrr {}, scause", out(reg) bits);
             }
+
             Scause { bits }
         }
     }
